@@ -14,7 +14,7 @@ public class Runner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         System.out.println("sending message ...");
-        rabbitTemplate.convertAndSend(RabbitmqTutorialApplication.topicExchangeName,
+        rabbitTemplate.convertAndSend("spring-boot-exchange",
                 "foo.bar.baz", "Hello from RabbitMQ");
     }
 }
