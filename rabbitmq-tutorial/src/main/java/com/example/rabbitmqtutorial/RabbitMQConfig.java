@@ -1,5 +1,6 @@
 package com.example.rabbitmqtutorial;
 
+import jdk.jfr.consumer.RecordedEvent;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -24,31 +25,18 @@ public class RabbitMQConfig {
 
     @Bean
     Queue queue(){
-        return new Queue(queueName, true);
+        return new Queue(queueName);
     }
 
-    @Bean
-    TopicExchange baseExchange(){
-        return new TopicExchange(topicExchangeName);
-    }
+    private static class ReceiverConfig {
+        @Bean
+        public Receiver receiver1(){
+            return new Receiver(1);
+        }
 
-    @Bean
-    Binding binding(Queue queue, TopicExchange baseExchange){
-        return BindingBuilder.bind(queue).to(baseExchange).with(fooRoutingKey);
-    }
-
-    @Bean
-    SimpleMessageListenerContainer container(ConnectionFactory connectionFactory,
-                                             MessageListenerAdapter listenerAdapter) {
-        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(connectionFactory);
-        container.setQueueNames(queueName);
-        container.setMessageListener(listenerAdapter);
-        return container;
-    }
-
-    @Bean
-    MessageListenerAdapter listenerAdapter(Receiver receiver){
-        return new MessageListenerAdapter(receiver, "receiveMessage");
+        @Bean
+        public Receiver receiver2(){
+            return new Receiver(2);
+        }
     }
 }

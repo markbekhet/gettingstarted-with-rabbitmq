@@ -1,27 +1,25 @@
 package com.example.rabbitmqtutorial;
 
+import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
+import org.springframework.scheduling.annotation.Scheduled;
 
-@Component
-public class Runner implements CommandLineRunner {
-    private final RabbitTemplate rabbitTemplate;
-    public Runner(RabbitTemplate rabbitTemplate){
-        this.rabbitTemplate = rabbitTemplate;
-    }
+import java.util.concurrent.atomic.AtomicInteger;
 
-    @Value("${runnableExchange}")
-    private String exchange;
+public class Runner{
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
-    @Value("${fooRoutingKey}")
-    private String routing;
+    @Value("${queueName}")
+    private String queueName;
 
-    @Override
-    public void run(String... args) throws Exception {
+    AtomicInteger count = new AtomicInteger(0);
+    @Scheduled(fixedDelay = 10000, initialDelay = 50000)
+    public void send(){
         System.out.println("sending message ...");
-        rabbitTemplate.convertAndSend(exchange,
-                routing, "Hello from RabbitMQ");
+        rabbitTemplate.convertAndSend(queueName,
+                "Hello from RabbitMQ " + count.incrementAndGet());
     }
 }
