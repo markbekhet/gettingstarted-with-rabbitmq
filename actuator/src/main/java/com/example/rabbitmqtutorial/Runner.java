@@ -1,6 +1,7 @@
 package com.example.rabbitmqtutorial;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -11,10 +12,16 @@ public class Runner implements CommandLineRunner {
         this.rabbitTemplate = rabbitTemplate;
     }
 
+    @Value("${runnableExchange}")
+    private String exchange;
+
+    @Value("${fooRoutingKey}")
+    private String routing;
+
     @Override
     public void run(String... args) throws Exception {
         System.out.println("sending message ...");
-        rabbitTemplate.convertAndSend("spring-boot-exchange",
-                "foo.bar.baz", "Hello from RabbitMQ");
+        rabbitTemplate.convertAndSend(exchange,
+                routing, "Hello from RabbitMQ");
     }
 }
